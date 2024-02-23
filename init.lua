@@ -1,10 +1,9 @@
 vim.g.mapleader = ' '
 
--- lazyvim install path
--- can be printed with :echo stdpath('data') . '/lazy/lazy.nvim'
+-- LAZY INSTALL
+-- install path
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
 local uv = vim.uv or vim.loop
-
 -- auto-install lazy.nvim if not present
 if not uv.fs_stat(lazypath) then
     print('Installing lazy.nvim...')
@@ -18,9 +17,9 @@ if not uv.fs_stat(lazypath) then
     })
     print('Done.')
 end
-
 vim.opt.rtp:prepend(lazypath)
 
+-- LAZY PLUGINS
 require('lazy').setup({
     { 'rebelot/kanagawa.nvim' },
     { 'navarasu/onedark.nvim' },
@@ -60,15 +59,29 @@ require('lazy').setup({
 })
 
 
-require('constanzee.options')
+-- OPTIONS
+vim.opt.number = true
 
+-- OPTIONS TAB
+-- set indentation to be always done with spaces
+vim.opt.expandtab = true
+-- set the number of spaces <Tab> and <Backspace> inserts/deletes
+vim.opt.softtabstop = 4
+-- set the number of spaces that are inserted when (auto)indent (example: <) is used
+vim.opt.shiftwidth = 4
+-- define the width of a <Tab> character
+-- makes sure that files containing tabs look the sames as ones using 4 spaces
+vim.opt.tabstop = 4
+-- (existing files can be converted to these settings with :retab)
 
+-- THEME
 require("kanagawa").setup {
     commentStyle = { italic = false },
     keywordStyle = { italic = false },
 }
 require("kanagawa").load("wave")
 
+-- LSP ZERO
 local lsp_zero = require('lsp-zero')
 lsp_zero.on_attach(function(client, buffnr)
     -- see :help lsp-zero-keybindings
@@ -85,40 +98,9 @@ lsp_zero.on_attach(function(client, buffnr)
     })
 end)
 
-require('mason').setup({})
-require('mason-lspconfig').setup({
-    ensure_installed = { 'rust_analyzer', 'tsserver' },
-    handlers = {
-        lsp_zero.default_setup,
-    },
-})
-
-
-local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
-vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
-vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
-vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
-
-
-local harpoon = require('harpoon')
-harpoon:setup()
-
-vim.keymap.set("n", "<leader>a", function() harpoon:list():append() end)
-vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
-
-vim.keymap.set("n", "<C-h>", function() harpoon:list():select(1) end)
-vim.keymap.set("n", "<C-t>", function() harpoon:list():select(2) end)
-vim.keymap.set("n", "<C-n>", function() harpoon:list():select(3) end)
-vim.keymap.set("n", "<C-s>", function() harpoon:list():select(4) end)
-
--- toggle previous and next buffers stored within Harpoon list
-vim.keymap.set("n", "<C-S-P>", function() harpoon:list():prev() end)
-vim.keymap.set("n", "<C-S-N>", function() harpoon:list():next() end)
-
+-- LSP ZERO EXTRA KEYBINDS
 local cmp = require('cmp')
 local cmp_action = require('lsp-zero').cmp_action()
-
 cmp.setup({
     mapping = cmp.mapping.preset.insert({
         -- `Enter` key to confirm completion
@@ -137,8 +119,42 @@ cmp.setup({
     })
 })
 
+-- MASON
+require('mason').setup({})
+require('mason-lspconfig').setup({
+    ensure_installed = { 'rust_analyzer', 'tsserver' },
+    handlers = {
+        lsp_zero.default_setup,
+    },
+})
+
+-- TELESCOPE
+local builtin = require('telescope.builtin')
+vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
+vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
+vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
+vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
+
+-- HARPOON
+local harpoon = require('harpoon')
+harpoon:setup()
+
+-- HARPOON KEYBINDS
+vim.keymap.set("n", "<leader>a", function() harpoon:list():append() end)
+vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+-- quickly jump to a buffer
+vim.keymap.set("n", "<C-h>", function() harpoon:list():select(1) end)
+vim.keymap.set("n", "<C-t>", function() harpoon:list():select(2) end)
+vim.keymap.set("n", "<C-n>", function() harpoon:list():select(3) end)
+vim.keymap.set("n", "<C-s>", function() harpoon:list():select(4) end)
+-- toggle previous and next buffers stored within Harpoon list
+vim.keymap.set("n", "<C-S-P>", function() harpoon:list():prev() end)
+vim.keymap.set("n", "<C-S-N>", function() harpoon:list():next() end)
+
+-- AUTOCLOSE BRACES
 require("autoclose").setup()
 
+-- LUALINE
 require("lualine").setup {
     options = {
         theme = "iceberg_dark"
