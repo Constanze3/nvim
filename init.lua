@@ -25,7 +25,10 @@ require('lazy').setup({
     { 'navarasu/onedark.nvim' },
     { 'williamboman/mason.nvim' },
     { 'williamboman/mason-lspconfig.nvim' },
-    { 'VonHeikemen/lsp-zero.nvim',        branch = 'v3.x' },
+    {
+        'VonHeikemen/lsp-zero.nvim',
+        branch = 'v3.x'
+    },
     { 'neovim/nvim-lspconfig' },
     { 'hrsh7th/cmp-nvim-lsp' },
     { 'hrsh7th/nvim-cmp' },
@@ -43,6 +46,9 @@ require('lazy').setup({
     { 'm4xshen/autoclose.nvim' },
     {
         'nvim-treesitter/nvim-treesitter',
+        dependencies = {
+            'nvim-treesitter/nvim-treesitter-textobjects',
+        },
         build = ':TSUpdate',
         config = function()
             require("nvim-treesitter.configs").setup {
@@ -50,6 +56,7 @@ require('lazy').setup({
                 highlight = { enable = true, }
             }
         end
+
     },
     {
         'nvim-lualine/lualine.nvim',
@@ -83,7 +90,7 @@ require("kanagawa").load("wave")
 
 -- LSP ZERO
 local lsp_zero = require('lsp-zero')
-lsp_zero.on_attach(function(client, buffnr)
+lsp_zero.on_attach(function(client, buffer)
     -- see :help lsp-zero-keybindings
     -- to learn the available actions
     lsp_zero.default_keymaps({ buffer = buffer })
@@ -97,6 +104,27 @@ lsp_zero.on_attach(function(client, buffnr)
         end,
     })
 end)
+
+-- MASON
+require('mason').setup({})
+require('mason-lspconfig').setup({
+    ensure_installed = { 'rust_analyzer', 'tsserver' },
+    handlers = {
+        lsp_zero.default_setup,
+    },
+    server_options
+})
+
+require 'lspconfig'.lua_ls.setup {
+    settings = {
+        Lua = {
+            diagnostics = {
+                -- Get the language server to recognize the `vim` global
+                globals = { 'vim' },
+            },
+        },
+    },
+}
 
 -- LSP ZERO EXTRA KEYBINDS
 local cmp = require('cmp')
@@ -117,15 +145,6 @@ cmp.setup({
         ['<C-u>'] = cmp.mapping.scroll_docs(-4),
         ['<C-d>'] = cmp.mapping.scroll_docs(4),
     })
-})
-
--- MASON
-require('mason').setup({})
-require('mason-lspconfig').setup({
-    ensure_installed = { 'rust_analyzer', 'tsserver' },
-    handlers = {
-        lsp_zero.default_setup,
-    },
 })
 
 -- TELESCOPE
