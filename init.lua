@@ -63,6 +63,11 @@ require('lazy').setup({
         dependencies = { 'nvim-tree/nvim-web-devicons' }
     },
     { 'WhoIsSethDaniel/lualine-lsp-progress.nvim' },
+    { 'subnut/nvim-ghost.nvim' },
+    {
+        'wakatime/vim-wakatime',
+        lazy = false
+    }
 })
 
 
@@ -108,7 +113,7 @@ end)
 -- MASON
 require('mason').setup({})
 require('mason-lspconfig').setup({
-    ensure_installed = { 'rust_analyzer', 'tsserver' },
+    ensure_installed = { 'rust_analyzer', 'tsserver', 'zls', 'clangd' },
     handlers = {
         lsp_zero.default_setup,
     },
