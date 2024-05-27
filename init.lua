@@ -1,28 +1,42 @@
-vim.g.mapleader = ' '
+vim.g.mapleader = " "
 
--- LAZY INSTALL
--- install path
-local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
-local uv = vim.uv or vim.loop
--- auto-install lazy.nvim if not present
-if not uv.fs_stat(lazypath) then
-    print('Installing lazy.nvim...')
-    vim.fn.systen({
-        'git',
-        'clone',
-        '--filter=blob:none',
-        'https://github.com/folke/lazy.nvim.git',
-        '--branch=stable',
+-- OPTIONS
+vim.opt.number = true
+
+-- set indentation to be always done with spaces
+vim.opt.expandtab = true
+
+-- set the number of spaces <Tab> and <Backspace> inserts/deletes
+vim.opt.softtabstop = 4
+
+-- set the number of spaces that are inserted when (auto)indent (example: <) is used
+vim.opt.shiftwidth = 4
+
+-- define the width of a <Tab> character
+-- makes sure that files containing tabs look the sames as ones using 4 spaces
+vim.opt.tabstop = 4
+
+-- (existing files can be converted to these settings with :retab)
+
+
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+    vim.fn.system({
+        "git",
+        "clone",
+        "--filter=blob:none",
+        "https://github.com/folke/lazy.nvim.git",
+        "--branch=stable", -- latest stable release
         lazypath,
     })
-    print('Done.')
 end
 vim.opt.rtp:prepend(lazypath)
 
+-- require("lazy").setup("plugins")
+
 -- LAZY PLUGINS
 require('lazy').setup({
-    { 'rebelot/kanagawa.nvim' },
-    { 'navarasu/onedark.nvim' },
+    { import = "plugins" },
     { 'williamboman/mason.nvim' },
     { 'williamboman/mason-lspconfig.nvim' },
     {
@@ -33,11 +47,6 @@ require('lazy').setup({
     { 'hrsh7th/cmp-nvim-lsp' },
     { 'hrsh7th/nvim-cmp' },
     { 'L3MON4D3/LuaSnip' },
-    {
-        'nvim-telescope/telescope.nvim',
-        tag = '0.1.5',
-        dependencies = { 'nvim-lua/plenary.nvim' }
-    },
     {
         "ThePrimeagen/harpoon",
         branch = "harpoon2",
@@ -70,29 +79,6 @@ require('lazy').setup({
     }
 })
 
-
--- OPTIONS
-vim.opt.number = true
-
--- OPTIONS TAB
--- set indentation to be always done with spaces
-vim.opt.expandtab = true
--- set the number of spaces <Tab> and <Backspace> inserts/deletes
-vim.opt.softtabstop = 4
--- set the number of spaces that are inserted when (auto)indent (example: <) is used
-vim.opt.shiftwidth = 4
--- define the width of a <Tab> character
--- makes sure that files containing tabs look the sames as ones using 4 spaces
-vim.opt.tabstop = 4
--- (existing files can be converted to these settings with :retab)
-
--- THEME
-require("kanagawa").setup {
-    commentStyle = { italic = false },
-    keywordStyle = { italic = false },
-}
-require("kanagawa").load("wave")
-
 -- LSP ZERO
 local lsp_zero = require('lsp-zero')
 lsp_zero.on_attach(function(client, buffer)
@@ -113,7 +99,7 @@ end)
 -- MASON
 require('mason').setup({})
 require('mason-lspconfig').setup({
-    ensure_installed = { 'rust_analyzer', 'tsserver', 'zls', 'clangd' },
+    ensure_installed = { 'rust_analyzer', 'tsserver', 'zls', 'clangd', 'pyright' },
     handlers = {
         lsp_zero.default_setup,
     },
@@ -151,13 +137,6 @@ cmp.setup({
         ['<C-d>'] = cmp.mapping.scroll_docs(4),
     })
 })
-
--- TELESCOPE
-local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
-vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
-vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
-vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
 
 -- HARPOON
 local harpoon = require('harpoon')
