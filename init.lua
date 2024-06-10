@@ -52,7 +52,7 @@ require('lazy').setup({
         branch = "harpoon2",
         dependencies = { "nvim-lua/plenary.nvim" }
     },
-    { 'm4xshen/autoclose.nvim' },
+    -- { 'm4xshen/autoclose.nvim' },
     {
         'nvim-treesitter/nvim-treesitter',
         dependencies = {
@@ -155,7 +155,7 @@ vim.keymap.set("n", "<C-S-P>", function() harpoon:list():prev() end)
 vim.keymap.set("n", "<C-S-N>", function() harpoon:list():next() end)
 
 -- AUTOCLOSE BRACES
-require("autoclose").setup()
+-- require("autoclose").setup()
 
 -- LUALINE
 require("lualine").setup {
