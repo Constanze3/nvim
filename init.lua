@@ -1,3 +1,4 @@
+
 -- BASIC VIM OPTIONS
 
 vim.g.mapleader = " "
@@ -49,4 +50,10 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 -- load plugins from the plugins folder
-require("lazy").setup("plugins")
+require("lazy").setup({
+    {import = "plugins"},
+    {import = "plugins/themes"}
+})
+
+-- THEME
+vim.cmd("colorscheme darkplus")
