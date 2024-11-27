@@ -49,4 +49,4 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 -- load plugins from the plugins folder
-require("lazy").setup("lazy_plugins")
+require("lazy").setup("plugins")
