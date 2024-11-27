@@ -4,7 +4,7 @@ return {
         vim.cmd("colorscheme kanagawa")
     end,
     opts = {
-        transparent = true,
+        transparent = false,
         commentStyle = { italic = false },
         keywordStyle = { italic = false },
         overrides = function()
@@ -12,5 +12,5 @@ return {
                 ["@variable.builtin"] = { italic = false },
             }
         end
-    },
+    }
 }
