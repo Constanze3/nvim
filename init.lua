@@ -20,17 +20,20 @@ vim.opt.tabstop = 4
 
 -- (existing files can be converted to these settings with :retab)
 
--- auto-format
-vim.api.nvim_create_autocmd("BufWritePre", {
-    callback = function()
-        vim.lsp.buf.format()
-    end
-})
-
--- disable underlines
+-- disable lsp underlines
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
     vim.lsp.diagnostic.on_publish_diagnostics, { underline = false }
 )
+
+-- FORMAT ON SAVE
+format_on_save_enabled = true
+vim.api.nvim_create_autocmd("BufWritePre", {
+    callback = function()
+        if format_on_save_enabled then
+            vim.lsp.buf.format()
+        end
+    end
+})
 
 -- LAZY.NVIM
 
@@ -57,3 +60,5 @@ require("lazy").setup({
 
 -- THEME
 vim.cmd("colorscheme darkplus")
+
+
