@@ -233,7 +233,10 @@ return {
             },
             { 
                 "<leader>dB", 
-                function() require("dap").set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, 
+                function() 
+                    require("dap").set_breakpoint(vim.fn.input('Breakpoint condition: ')) 
+                    format_on_save_enabled = false
+                end, 
                 desc = "DAP Breakpoint Condition",
                 icon = { icon = "", color = "yellow" }
             },
@@ -248,7 +251,7 @@ return {
             --     "<leader>da", 
             --     function() require("dap").continue({ before = get_args }) end, 
             --     desc = "DAP Run With Args" 
-            -- },
+            -- },whi
             { 
                 "<leader>dC", 
                 function() require("dap").run_to_cursor() end, 
@@ -326,6 +329,7 @@ return {
         })
 
         -- ENABLE FORMAT ON SAVE
+        -- format on save is disabled when toggling breakpoints
         wk.add({
             "<leader><F3>",
             function() format_on_save_enabled = true end,
