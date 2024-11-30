@@ -1,11 +1,22 @@
 return {
     "hrsh7th/nvim-cmp",
+    dependencies = {
+        "hrsh7th/cmp-nvim-lsp",
+        "hrsh7th/vim-vsnip",
+        "hrsh7th/cmp-vsnip"
+    },
     config = function()
         local cmp = require("cmp")
         cmp.setup({
             sources = cmp.config.sources({
-                { name = "nvim_lsp" }
+                { name = "nvim_lsp" },
+                { name = "vsnip" }
             }),
+        snippet = {
+            expand = function(args)
+                vim.fn["vsnip#anonymous"](args.body)
+            end,
+        },
             mapping = cmp.mapping.preset.insert({
                 -- Enter key to confirm completion
                 ['<CR>'] = cmp.mapping.confirm({ select = false }),

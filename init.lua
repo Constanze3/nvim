@@ -4,6 +4,7 @@
 vim.g.mapleader = " "
 
 vim.opt.number = true
+vim.opt.relativenumber = true
 
 -- set indentation to be always done with spaces
 vim.opt.expandtab = true
