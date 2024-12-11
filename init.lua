@@ -21,6 +21,9 @@ vim.opt.tabstop = 4
 
 -- (existing files can be converted to these settings with :retab)
 
+-- keep signcolumn always open
+vim.wo.signcolumn = "yes"
+
 -- disable lsp underlines
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
     vim.lsp.diagnostic.on_publish_diagnostics, { underline = false }

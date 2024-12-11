@@ -7,8 +7,8 @@ return {
         configs.setup({
             ensure_installed = { "python" },
             sync_install = false,
-            highlight = { enable = true },
-            indent = { enable = true },  
+            highlight = { enable = true, disable = { "rust" } },
+            indent = { enable = true, disable = { "rust" } },  
         })
     end
 }
