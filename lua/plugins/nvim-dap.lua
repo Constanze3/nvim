@@ -1,7 +1,6 @@
 return {
     "mfussenegger/nvim-dap",
     dependencies = {
-        "rcarriga/nvim-dap-ui",
         "nvim-neotest/nvim-nio"
     },
     config = function() 
@@ -15,6 +14,15 @@ return {
                 args = { "--port", "${port}" }
             },
             detached = vim.loop.os_uname().sysname ~= "Windows"
+        }
+
+        dap.adapters.python = {
+            type = "executable",
+            command = "python",
+            args = { "-m", "debugpy.adapter" },
+            options = {
+                source_filetype = "python"
+            }
         }
 
         dap.configurations.rust = {
@@ -36,11 +44,14 @@ return {
             }
         }
 
-        local dapui = require("dapui")
-        dapui.setup({})
-
-        dap.listeners.after.event_initialized["dapui_config"] = function()
-            dapui.open({})
-        end
+        dap.configurations.python = {
+            {
+                name = "Debug File",
+                type = "python",
+                request = "launch",
+                program = "${file}",
+                console = "integratedTerminal"
+            }
+        }
     end
 }
