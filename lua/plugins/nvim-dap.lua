@@ -25,9 +25,27 @@ return {
             }
         }
 
+        dap.adapters.dart = {
+            type = "executable",
+            command = "dart",   
+            args = { "debug_adapter" },
+            options = { 
+                detached = vim.loop.os_uname().sysname ~= "Windows"
+            }
+        }
+
+        dap.adapters.flutter = {
+            type = "executable",
+            command = "flutter",   
+            args = { "debug_adapter" },
+            options = { 
+                detached = vim.loop.os_uname().sysname ~= "Windows"
+            }
+        }
+
         dap.configurations.rust = {
             {
-                name = "Debug Executable",
+                name = "Debug executable",
                 type = "lldb",
                 request = "launch",
                 program = function() 
@@ -46,11 +64,28 @@ return {
 
         dap.configurations.python = {
             {
-                name = "Debug File",
+                name = "Debug file",
                 type = "python",
                 request = "launch",
                 program = "${file}",
                 console = "integratedTerminal"
+            }
+        }
+
+        dap.configurations.dart = {
+            {
+                name = "Launch dart",
+                type = "dart",
+                request = "launch",
+                program = "${workspaceFolder}/lib/main.dart",
+                cwd = "${workspaceFolder}"
+            },
+            {
+                name = "Launch flutter",
+                type = "flutter",
+                request = "launch",
+                program = "${workspaceFolder}/lib/main.dart",
+                cwd = "${workspaceFolder}"
             }
         }
     end

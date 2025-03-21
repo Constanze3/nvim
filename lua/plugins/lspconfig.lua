@@ -10,11 +10,15 @@ return {
         local lspconfig = require("lspconfig")
 
         lspconfig.rust_analyzer.setup({
-            capabilities = capabilities,
+            capabilities = capabilities
         })
 
         lspconfig.pyright.setup({
-            capabilities = capabilities,
+            capabilities = capabilities
+        })
+
+        lspconfig.dartls.setup({
+          capabilities = capabilities
         })
     end
 }

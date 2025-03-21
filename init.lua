@@ -3,8 +3,10 @@
 
 vim.g.mapleader = " "
 
+-- do not wrap text
+vim.opt.wrap = false
+
 vim.opt.number = true
-vim.opt.relativenumber = true
 
 -- set indentation to be always done with spaces
 vim.opt.expandtab = true
@@ -24,10 +26,32 @@ vim.opt.tabstop = 4
 -- keep signcolumn always open
 vim.wo.signcolumn = "yes"
 
+tab_overrides = { [2] = {"dart", "yaml"} }
+for k, v in pairs(tab_overrides) do
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = v,
+      callback = function()
+        vim.opt_local.tabstop = k
+        vim.opt_local.shiftwidth = k
+        vim.opt_local.softtabstop = k
+      end,
+    }) 
+
+    vim.api.nvim_create_autocmd("BufLeave", {
+      pattern = v,
+      callback = function()
+        vim.opt_local.tabstop = 4
+        vim.opt_local.shiftwidth = 4
+        vim.opt_local.softtabstop = 4
+      end,
+
+    })
+end
+
 -- disable lsp underlines
-vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-    vim.lsp.diagnostic.on_publish_diagnostics, { underline = false }
-)
+-- vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+--     vim.lsp.diagnostic.on_publish_diagnostics, { underline = false }
+-- )
 
 -- FORMAT ON SAVE
 format_on_save_enabled = true
@@ -63,6 +87,6 @@ require("lazy").setup({
 })
 
 -- THEME
-vim.cmd("colorscheme darkplus")
+vim.cmd("colorscheme kanagawa")
 
 

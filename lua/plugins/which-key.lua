@@ -50,8 +50,8 @@ return {
                 group = "harpoon",
                 {
                     "<leader>a", 
-                    function() harpoon:list():append() end, 
-                    desc = "Harpoon Append File"
+                    function() harpoon:list():add() end, 
+                    desc = "Harpoon Add File"
                 },
                 { 
                     "<C-e>", 
@@ -59,23 +59,18 @@ return {
                     desc = "Harpoon Show List" 
                 },
                 { 
-                    "<C-1>", 
+                    "<C-j>", 
                     function() harpoon:list():select(1) end, 
                     desc = "Harpoon Buffer 1" },
                 { 
-                    "<C-2>", 
+                    "<C-k>", 
                     function() harpoon:list():select(2) end, 
                     desc = "Harpoon Buffer 2" 
                 },
                 { 
-                    "<C-3>", 
+                    "<C-l>", 
                     function() harpoon:list():select(3) end, 
                     desc = "Harpoon Buffer 3" 
-                },
-                { 
-                    "<C-4>", 
-                    function() harpoon:list():select(4) end, 
-                    desc = "Harpoon Buffer 4" 
                 },
                 { 
                     "<C-S-P>", 
