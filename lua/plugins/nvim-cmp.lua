@@ -12,11 +12,11 @@ return {
                 { name = "nvim_lsp" },
                 { name = "vsnip" }
             }),
-        snippet = {
-            expand = function(args)
-                vim.fn["vsnip#anonymous"](args.body)
-            end,
-        },
+            snippet = {
+                expand = function(args)
+                    vim.fn["vsnip#anonymous"](args.body)
+                end,
+            },
             mapping = cmp.mapping.preset.insert({
                 -- Enter key to confirm completion
                 ['<CR>'] = cmp.mapping.confirm({ select = false }),
