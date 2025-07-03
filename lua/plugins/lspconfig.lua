@@ -11,15 +11,23 @@ return {
 
         lspconfig.rust_analyzer.setup({
             capabilities = capabilities
+
         })
 
-        lspconfig.pyright.setup({
+        -- lspconfig.pyright.setup({
+        --     capabilities = capabilities
+        -- })
+        
+        lspconfig.clangd.setup({
             capabilities = capabilities
         })
 
         lspconfig.dartls.setup({
           capabilities = capabilities
         })
+
+        vim.lsp.enable("phpactor")
+
     end
 }
 

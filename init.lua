@@ -11,15 +11,15 @@ vim.opt.number = true
 -- set indentation to be always done with spaces
 vim.opt.expandtab = true
 
+-- define the width of a <Tab> character (how \t is displayed)
+-- makes sure that files containing tabs look the sames as ones using 4 spaces
+vim.opt.tabstop = 4
+
 -- set the number of spaces <Tab> and <Backspace> inserts/deletes
 vim.opt.softtabstop = 4
 
 -- set the number of spaces that are inserted when (auto)indent (example: <) is used
 vim.opt.shiftwidth = 4
-
--- define the width of a <Tab> character
--- makes sure that files containing tabs look the sames as ones using 4 spaces
-vim.opt.tabstop = 4
 
 -- (existing files can be converted to these settings with :retab)
 
@@ -54,12 +54,9 @@ end
 -- )
 
 -- FORMAT ON SAVE
-format_on_save_enabled = true
 vim.api.nvim_create_autocmd("BufWritePre", {
     callback = function()
-        if format_on_save_enabled then
-            vim.lsp.buf.format()
-        end
+        vim.lsp.buf.format()
     end
 })
 
@@ -87,6 +84,4 @@ require("lazy").setup({
 })
 
 -- THEME
-vim.cmd("colorscheme kanagawa")
-
-
+vim.cmd("colorscheme kanagawa-dragon")
