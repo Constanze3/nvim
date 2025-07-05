@@ -8,6 +8,6 @@ return {
             return {
                 ["@variable.builtin"] = { italic = false },
             }
-        end
-    }
+        end,
+    },
 }

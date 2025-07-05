@@ -1,12 +1,9 @@
-
--- BASIC VIM OPTIONS
-
 vim.g.mapleader = " "
+
+vim.opt.number = true
 
 -- do not wrap text
 vim.opt.wrap = false
-
-vim.opt.number = true
 
 -- set indentation to be always done with spaces
 vim.opt.expandtab = true
@@ -20,51 +17,28 @@ vim.opt.softtabstop = 4
 
 -- set the number of spaces that are inserted when (auto)indent (example: <) is used
 vim.opt.shiftwidth = 4
-
 -- (existing files can be converted to these settings with :retab)
 
--- keep signcolumn always open
+-- keep signcolumn always open (otherwise error/warning symbols can get annoying)
 vim.wo.signcolumn = "yes"
 
-tab_overrides = { [2] = {"dart", "yaml"} }
-for k, v in pairs(tab_overrides) do
-    vim.api.nvim_create_autocmd("FileType", {
-      pattern = v,
-      callback = function()
-        vim.opt_local.tabstop = k
-        vim.opt_local.shiftwidth = k
-        vim.opt_local.softtabstop = k
-      end,
-    }) 
-
-    vim.api.nvim_create_autocmd("BufLeave", {
-      pattern = v,
-      callback = function()
-        vim.opt_local.tabstop = 4
-        vim.opt_local.shiftwidth = 4
-        vim.opt_local.softtabstop = 4
-      end,
-
-    })
-end
-
--- disable lsp underlines
--- vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
---     vim.lsp.diagnostic.on_publish_diagnostics, { underline = false }
--- )
-
--- FORMAT ON SAVE
+-- format on save
 vim.api.nvim_create_autocmd("BufWritePre", {
-    callback = function()
+    callback = function(args)
+        require("conform").format({ bufnr = args.buf })
         vim.lsp.buf.format()
-    end
+    end,
 })
 
--- LAZY.NVIM
+-- global variable used to collect information from individual plugins
+global = {
+    packages = {},
+}
 
 -- install-path for lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 
+-- ensure that lazy.nvim is installed
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
     vim.fn.system({
         "git",
@@ -77,11 +51,26 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- load plugins from the plugins folder
+-- load plugins with lazy.nvim from the plugins folder
 require("lazy").setup({
-    {import = "plugins"},
-    {import = "plugins/themes"}
+    { import = "plugins" },
+    { import = "plugins/themes" },
 })
 
--- THEME
+vim.api.nvim_create_autocmd("User", {
+    pattern = "VeryLazy",
+    callback = function(_)
+        -- download/update packages
+        require("mason").setup()
+        require("mason-tool-installer").setup({
+            ensure_installed = global.packages,
+            auto_update = true,
+        })
+    end,
+})
+
+-- load wsl support
+require("custom/wsl")
+
+-- set theme
 vim.cmd("colorscheme kanagawa-dragon")

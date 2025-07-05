@@ -3,14 +3,14 @@ return {
     dependencies = { "nvim-tree/nvim-web-devicons" },
     opts = {
         options = {
-            theme = "iceberg_dark"
+            theme = "iceberg_dark",
         },
         sections = {
             lualine_c = {
                 function()
                     return require("lsp-progress").progress()
-                end
-            }
-        }
-    }
+                end,
+            },
+        },
+    },
 }

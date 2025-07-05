@@ -1,9 +1,9 @@
 return {
     "mfussenegger/nvim-dap",
     dependencies = {
-        "nvim-neotest/nvim-nio"
+        "nvim-neotest/nvim-nio",
     },
-    config = function() 
+    config = function()
         local dap = require("dap")
 
         dap.adapters.lldb = {
@@ -11,9 +11,9 @@ return {
             port = "${port}",
             executable = {
                 command = "codelldb",
-                args = { "--port", "${port}" }
+                args = { "--port", "${port}" },
             },
-            detached = vim.loop.os_uname().sysname ~= "Windows"
+            detached = vim.loop.os_uname().sysname ~= "Windows",
         }
 
         dap.adapters.python = {
@@ -21,26 +21,26 @@ return {
             command = "python",
             args = { "-m", "debugpy.adapter" },
             options = {
-                source_filetype = "python"
-            }
+                source_filetype = "python",
+            },
         }
 
         dap.adapters.dart = {
             type = "executable",
-            command = "dart",   
+            command = "dart",
             args = { "debug_adapter" },
-            options = { 
-                detached = vim.loop.os_uname().sysname ~= "Windows"
-            }
+            options = {
+                detached = vim.loop.os_uname().sysname ~= "Windows",
+            },
         }
 
         dap.adapters.flutter = {
             type = "executable",
-            command = "flutter",   
+            command = "flutter",
             args = { "debug_adapter" },
-            options = { 
-                detached = vim.loop.os_uname().sysname ~= "Windows"
-            }
+            options = {
+                detached = vim.loop.os_uname().sysname ~= "Windows",
+            },
         }
 
         dap.configurations.rust = {
@@ -48,18 +48,18 @@ return {
                 name = "Debug executable",
                 type = "lldb",
                 request = "launch",
-                program = function() 
+                program = function()
                     local root = vim.fs.root(0, "Cargo.toml")
                     if root == nil then
                         error("Not a Cargo project")
                     end
 
                     local program_name = vim.fn.fnamemodify(root, ":t")
-                    return root .. "/target/debug/" .. program_name .. ".exe" 
+                    return root .. "/target/debug/" .. program_name .. ".exe"
                 end,
-                cwd = '${workspaceFolder}',
-                stopOnEntry = false
-            }
+                cwd = "${workspaceFolder}",
+                stopOnEntry = false,
+            },
         }
 
         dap.configurations.python = {
@@ -68,8 +68,8 @@ return {
                 type = "python",
                 request = "launch",
                 program = "${file}",
-                console = "integratedTerminal"
-            }
+                console = "integratedTerminal",
+            },
         }
 
         dap.configurations.dart = {
@@ -78,15 +78,15 @@ return {
                 type = "dart",
                 request = "launch",
                 program = "${workspaceFolder}/lib/main.dart",
-                cwd = "${workspaceFolder}"
+                cwd = "${workspaceFolder}",
             },
             {
                 name = "Launch flutter",
                 type = "flutter",
                 request = "launch",
                 program = "${workspaceFolder}/lib/main.dart",
-                cwd = "${workspaceFolder}"
-            }
+                cwd = "${workspaceFolder}",
+            },
         }
-    end
+    end,
 }
