@@ -1,3 +1,8 @@
+local ok, env = pcall(require, "env")
+if not ok then
+    vim.notify("Missing env.lua file!", vim.log.levels.ERROR)
+end
+
 vim.g.mapleader = " "
 
 vim.opt.number = true
@@ -31,7 +36,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 })
 
 -- global variable used to collect information from individual plugins
-global = {
+GLOBAL = {
     packages = {},
 }
 
@@ -51,26 +56,37 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- load plugins with lazy.nvim from the plugins folder
-require("lazy").setup({
-    { import = "plugins" },
-    { import = "plugins/themes" },
+-- auto update lazy plugins
+vim.api.nvim_create_autocmd("VimEnter", {
+    callback = function()
+        if require("lazy.status").has_updates() then
+            require("lazy").update()
+        end
+    end,
 })
 
+-- load plugins with lazy.nvim from the plugins folder
+require("lazy").setup({
+    { import = "plugins/core" },
+    { import = "plugins/themes" },
+    { import = "plugins" },
+})
+
+-- download/update mason packages
 vim.api.nvim_create_autocmd("User", {
     pattern = "VeryLazy",
-    callback = function(_)
-        -- download/update packages
-        require("mason").setup()
+    callback = function()
         require("mason-tool-installer").setup({
-            ensure_installed = global.packages,
+            ensure_installed = GLOBAL.packages,
             auto_update = true,
         })
     end,
 })
 
--- load wsl support
-require("custom/wsl")
+if env.wsl then
+    -- load wsl support
+    require("custom/wsl")
+end
 
 -- set theme
-vim.cmd("colorscheme kanagawa-dragon")
+vim.cmd(string.format("colorscheme %s", env.theme))

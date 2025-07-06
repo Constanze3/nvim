@@ -11,34 +11,45 @@ return {
     },
     config = function()
         local capabilities = require("cmp_nvim_lsp").default_capabilities()
-        local wk = require("which-key")
-
         vim.lsp.config("*", {
             capabilities = capabilities,
         })
 
-        vim.lsp.config("ts_ls", {
-            init_options = {
-                plugins = {
-                    {
-                        name = "@vue/typescript-plugin",
-                        location = "~/.nvm/versions/node/v22.17.0/lib/node_modules/@vue/typescript-plugin",
-                        languages = { "javascript", "typescript", "vue" },
+        local env = require("env")
+        local util = require("custom/util")
+
+        -- ensure the language servers to be installed by mason
+        util.extend(GLOBAL.packages, env.language_servers)
+
+        -- enable the language servers
+        vim.lsp.enable(env.language_servers)
+
+        -- if both vue_ls and ts_ls are enabled configure ts_ls to support vue
+        if util.contains_multiple(env.language_servers, { "vue_ls", "ts_ls" }) then
+            local vue_plugin_location = vim.fn.stdpath("data")
+                .. "/mason/packages/vue-language-server/node_modules/@vue/language-server"
+
+            vim.lsp.config("ts_ls", {
+                init_options = {
+                    plugins = {
+                        {
+                            name = "@vue/typescript-plugin",
+                            location = vue_plugin_location,
+                            languages = { "javascript", "typescript", "vue" },
+                        },
                     },
                 },
-            },
-            filetypes = {
-                "javascript",
-                "typescript",
-                "vue",
-            },
-        })
-
-        vim.lsp.enable({ "phpactor", "ts_ls", "vue_ls", "lua_ls" })
+                filetypes = {
+                    "javascript",
+                    "typescript",
+                    "vue",
+                },
+            })
+        end
 
         vim.api.nvim_create_autocmd("LspAttach", {
-            callback = function(event)
-                wk.add({
+            callback = function()
+                require("which-key").add({
                     group = "lsp",
                     {
                         "K",

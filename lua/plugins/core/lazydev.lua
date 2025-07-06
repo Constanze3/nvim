@@ -1,8 +1,5 @@
 return {
     "folke/lazydev.nvim",
-    init = function(_)
-        table.insert(global.packages, "lua-language-server")
-    end,
     opts = {
         library = {
             -- See the configuration section for more details
@@ -11,4 +8,5 @@ return {
         },
     },
     ft = "lua", -- only load on lua files
+    enabled = require("custom/in_nvim").check(),
 }

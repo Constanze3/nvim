@@ -6,8 +6,8 @@ return {
         "folke/which-key.nvim",
     },
     config = function()
-        local wk = require("which-key")
         local harpoon = require("harpoon")
+        local wk = require("which-key")
 
         wk.add({
             group = "harpoon",

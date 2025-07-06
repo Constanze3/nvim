@@ -1,7 +1,7 @@
 return {
     "stevearc/conform.nvim",
     init = function(_)
-        table.insert(global.packages, "stylua")
+        table.insert(GLOBAL.packages, "stylua")
     end,
     opts = {
         formatters_by_ft = {
