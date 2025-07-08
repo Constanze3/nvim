@@ -1,47 +1,20 @@
 return {
     "folke/which-key.nvim",
-    keys = {
-        {
-            "<leader>?",
-            function()
-                require("which-key").show({ global = false })
-            end,
-            desc = "Buffer Local Keymaps (which-key)",
-        },
-    },
     init = function()
         local wk = require("which-key")
+
+        wk.add({
+            "<leader>w",
+            wk.show,
+            desc = "Which Key",
+            icon = { icon = "", color = "blue" },
+        })
 
         -- NETRW
         wk.add({
             "E",
             "<cmd>Explore<cr>",
             desc = "Open Netrw Explorer",
-        })
-
-        -- TELESCOPE
-        wk.add({
-            group = "telescope",
-            {
-                "<leader>ff",
-                "<cmd>Telescope find_files<cr>",
-                desc = "Telescope Find Files",
-            },
-            {
-                "<leader>fg",
-                "<cmd>Telescope live_grep<cr>",
-                desc = "Telescope Live Grep",
-            },
-            {
-                "<leader>fb",
-                "<cmd>Telescope buffers<cr>",
-                desc = "Telescope Buffers",
-            },
-            {
-                "<leader>fh",
-                "<cmd>Telescope help_tags<cr>",
-                desc = "Telescope Help Tags",
-            },
         })
 
         -- DIAGNOSTIC
@@ -51,41 +24,6 @@ return {
                 vim.diagnostic.open_float()
             end,
             desc = "Open Diagnostic Pop-up",
-        })
-
-        -- TROUBLE
-        wk.add({
-            group = "trouble",
-            {
-                "<leader>xx",
-                "<cmd>Trouble diagnostics toggle<cr>",
-                desc = "Trouble Diagnostics",
-            },
-            {
-                "<leader>xX",
-                "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
-                desc = "Trouble Buffer Diagnostics",
-            },
-            {
-                "<leader>cs",
-                "<cmd>Trouble symbols toggle focus=false<cr>",
-                desc = "Trouble Symbols",
-            },
-            {
-                "<leader>cl",
-                "<cmd>Trouble lsp toggle focus=false win.position=right<cr>",
-                desc = "Trouble LSP Definitions / references / ...",
-            },
-            {
-                "<leader>xL",
-                "<cmd>Trouble loclist toggle<cr>",
-                desc = "Trouble Location List",
-            },
-            {
-                "<leader>xQ",
-                "<cmd>Trouble qflist toggle<cr>",
-                desc = "Trouble Quickfix List",
-            },
         })
 
         -- DAP (Debug Adapter Protocol)

@@ -7,17 +7,16 @@ return {
     },
     config = function()
         local harpoon = require("harpoon")
-        local wk = require("which-key")
 
-        wk.add({
+        require("which-key").add({
             group = "harpoon",
+            icon = { icon = "󰛢", color = "red" },
             {
                 "<leader>a",
                 function()
                     harpoon:list():add()
                 end,
                 desc = "Harpoon Add File",
-                icon = { icon = "󰛢", color = "red" },
             },
             {
                 "<C-e>",
