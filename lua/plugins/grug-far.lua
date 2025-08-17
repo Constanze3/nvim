@@ -1,4 +1,4 @@
 return {
-    "MagicDuck/grug-far.nvim",
-    opts = {},
+	"MagicDuck/grug-far.nvim",
+	opts = {},
 }

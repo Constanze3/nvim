@@ -1,43 +1,47 @@
 local ok, env = pcall(require, "env")
 if not ok then
-    vim.notify("Missing env.lua file!", vim.log.levels.ERROR)
+	vim.notify("Missing env.lua file!", vim.log.levels.ERROR)
 end
 
-vim.g.mapleader = " "
+local apply_settings = function()
+	vim.g.mapleader = " "
 
-vim.opt.number = true
+	vim.opt.number = true
 
--- do not wrap text
-vim.opt.wrap = false
+	-- do not wrap text
+	-- vim.opt.wrap = false
 
--- set indentation to be always done with spaces
-vim.opt.expandtab = true
+	-- set indentation to be always done with spaces
+	vim.opt.expandtab = true
 
--- define the width of a <Tab> character (how \t is displayed)
--- makes sure that files containing tabs look the sames as ones using 4 spaces
-vim.opt.tabstop = 4
+	-- define the width of a <Tab> character (how \t is displayed)
+	-- makes sure that files containing tabs look the sames as ones using 4 spaces
+	vim.opt.tabstop = 4
 
--- set the number of spaces <Tab> and <Backspace> inserts/deletes
-vim.opt.softtabstop = 4
+	-- set the number of spaces <Tab> and <Backspace> inserts/deletes
+	vim.opt.softtabstop = 4
 
--- set the number of spaces that are inserted when (auto)indent (example: <) is used
-vim.opt.shiftwidth = 4
--- (existing files can be converted to these settings with :retab)
+	-- set the number of spaces that are inserted when (auto)indent (example: <) is used
+	vim.opt.shiftwidth = 4
+	-- (existing files can be converted to these settings with :retab)
 
--- keep signcolumn always open (otherwise error/warning symbols can get annoying)
-vim.wo.signcolumn = "yes"
+	-- keep signcolumn always open (otherwise error/warning symbols can get annoying)
+	vim.wo.signcolumn = "yes"
 
--- format on save
-vim.api.nvim_create_autocmd("BufWritePre", {
-    callback = function(args)
-        require("conform").format({ bufnr = args.buf })
-        vim.lsp.buf.format()
-    end,
-})
+	-- set ESC as the back to normal mode key for the terminal
+	vim.api.nvim_set_keymap("t", "<ESC>", "<C-\\><C-n>", { noremap = true })
+
+	-- use F1 as an alternative to exit to normal mode fromn insert mode
+	vim.api.nvim_set_keymap("i", "<F1>", "<ESC>", { noremap = false })
+end
+
+vim.g.apply_settings = apply_settings
+apply_settings()
 
 -- global variable used to collect information from individual plugins
-GLOBAL = {
-    packages = {},
+PLUGIN_OUT = {
+	packages = {},
+	post_buffer_enter_callbacks = {},
 }
 
 -- install-path for lazy.nvim
@@ -45,48 +49,76 @@ local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 
 -- ensure that lazy.nvim is installed
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
-    vim.fn.system({
-        "git",
-        "clone",
-        "--filter=blob:none",
-        "https://github.com/folke/lazy.nvim.git",
-        "--branch=stable", -- latest stable release
-        lazypath,
-    })
+	vim.fn.system({
+		"git",
+		"clone",
+		"--filter=blob:none",
+		"https://github.com/folke/lazy.nvim.git",
+		"--branch=stable", -- latest stable release
+		lazypath,
+	})
 end
 vim.opt.rtp:prepend(lazypath)
 
 -- auto update lazy plugins
 vim.api.nvim_create_autocmd("VimEnter", {
-    callback = function()
-        if require("lazy.status").has_updates() then
-            require("lazy").update()
-        end
-    end,
+	callback = function()
+		if require("lazy.status").has_updates() then
+			require("lazy").update()
+		end
+	end,
 })
 
 -- load plugins with lazy.nvim from the plugins folder
 require("lazy").setup({
-    { import = "plugins/core" },
-    { import = "plugins/themes" },
-    { import = "plugins" },
+	{ import = "plugins/core" },
+	{ import = "plugins/themes" },
+	{ import = "plugins" },
 })
 
 -- download/update mason packages
 vim.api.nvim_create_autocmd("User", {
-    pattern = "VeryLazy",
-    callback = function()
-        require("mason-tool-installer").setup({
-            ensure_installed = GLOBAL.packages,
-            auto_update = true,
-        })
-    end,
+	pattern = "VeryLazy",
+	callback = function()
+		require("mason-tool-installer").setup({
+			ensure_installed = PLUGIN_OUT.packages,
+			auto_update = true,
+		})
+	end,
 })
 
 if env.wsl then
-    -- load wsl support
-    require("custom/wsl")
+	-- load wsl support
+	require("custom/wsl")
 end
+
+-- format on save
+vim.api.nvim_create_autocmd("BufWritePre", {
+	pattern = "*",
+	callback = function(args)
+		require("conform").format({ bufnr = args.buf })
+	end,
+})
 
 -- set theme
 vim.cmd(string.format("colorscheme %s", env.theme))
+
+local function branch_name()
+	local success, branch = pcall(vim.fn.system, "git branch --show-current")
+
+	if success then
+		return branch:gsub("\n", "")
+	else
+		return ""
+	end
+end
+
+vim.api.nvim_create_autocmd({ "FileType", "BufEnter", "FocusGained" }, {
+	callback = function()
+		vim.b.branch_name = branch_name()
+
+		for _, fn in ipairs(PLUGIN_OUT.post_buffer_enter_callbacks) do
+			fn()
+		end
+	end,
+})
