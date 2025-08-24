@@ -103,22 +103,15 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 -- set theme
 vim.cmd(string.format("colorscheme %s", env.theme))
 
-local function branch_name()
-	local success, branch = pcall(vim.fn.system, "git branch --show-current")
-
-	if success then
-		return branch:gsub("\n", "")
-	else
-		return ""
-	end
-end
-
-vim.api.nvim_create_autocmd({ "FileType", "BufEnter", "FocusGained" }, {
+-- before exiting close all terminal buffers
+-- this prevents an error with wqa
+vim.api.nvim_create_autocmd("ExitPre", {
+	pattern = "*",
 	callback = function()
-		vim.b.branch_name = branch_name()
-
-		for _, fn in ipairs(PLUGIN_OUT.post_buffer_enter_callbacks) do
-			fn()
+		for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+			if vim.api.nvim_get_option_value("buftype", { buf = buf }) == "terminal" then
+				vim.api.nvim_buf_delete(buf, { force = true })
+			end
 		end
 	end,
 })

@@ -1,3 +1,24 @@
+local util = require("custom/util")
+
+local function list_name_for_branch(branch_name)
+	local list_name = ""
+
+	if branch_name ~= "" then
+		list_name = "branch/" .. branch_name
+	end
+
+	return list_name
+end
+
+local function branch_local_list()
+	local harpoon = require("harpoon")
+
+	local branch_name = util.current_branch()
+	local list_name = list_name_for_branch(branch_name)
+
+	return harpoon:list(list_name)
+end
+
 return {
 	"ThePrimeagen/harpoon",
 	branch = "harpoon2",
@@ -10,7 +31,7 @@ return {
 
 		vim.g.harpoon_term_index = 1
 		harpoon:setup({
-			term = {
+			terminals = {
 				encode = false,
 				create_list_item = function(_, _)
 					local buf = vim.api.nvim_create_buf(true, false)
@@ -18,6 +39,8 @@ return {
 					vim.api.nvim_buf_call(buf, function()
 						vim.cmd("term")
 					end)
+
+					vim.api.nvim_set_option_value("filetype", "terminal", { buf = buf })
 
 					vim.api.nvim_create_autocmd("BufWinEnter", {
 						buffer = buf,
@@ -55,74 +78,113 @@ return {
 					vim.notify(list_item.value, vim.log.levels.INFO)
 				end,
 			},
+			branches = {
+				select = function(list_item, _, _)
+					local list_name = list_name_for_branch(list_item.value)
+					local items = harpoon:list(list_name).items
+
+					for _, item in ipairs(items) do
+						branch_local_list():add({ value = item.value, context = {} })
+					end
+				end,
+			},
 		})
 
-		-- branch local harpoon list
+		local terminal_list = harpoon:list("terminals")
+		local branch_list = harpoon:list("branches")
 
-		table.insert(PLUGIN_OUT.post_buffer_enter_callbacks, function()
-			local list_name = vim.b.branch_name or ""
+		-- branch local list
 
-			require("which-key").add({
-				group = "harpoon",
-				icon = { icon = "󰛢", color = "red" },
-				{
-					"<leader>a",
-					function()
-						harpoon:list(list_name):add()
-					end,
-					desc = "Harpoon Add File",
-				},
-				{
-					"<C-e>",
-					function()
-						harpoon.ui:toggle_quick_menu(harpoon:list(list_name))
-					end,
-					desc = "Harpoon Show List",
-				},
-				{
-					"<C-j>",
-					function()
-						harpoon:list(list_name):select(1)
-					end,
-					desc = "Harpoon Buffer 1",
-				},
-				{
-					"<C-k>",
-					function()
-						harpoon:list(list_name):select(2)
-					end,
-					desc = "Harpoon Buffer 2",
-				},
-				{
-					"<C-l>",
-					function()
-						harpoon:list(list_name):select(3)
-					end,
-					desc = "Harpoon Buffer 3",
-				},
-			})
+		-- delete branch local lists of branches that do not exist anymore
+		-- sadly the keys are still written to files
+		local branch_names = util.branches()
+		harpoon:_for_each_list(function(list, _, name)
+			if not (string.find(name, "^branch/")) then
+				return
+			end
+
+			local associated_branch_name = (name:gsub("^branch/", ""))
+
+			if not util.contains(branch_names, associated_branch_name) then
+				list:clear()
+				branch_list:remove(associated_branch_name)
+			end
 		end)
+
+		require("which-key").add({
+			group = "harpoon",
+			icon = { icon = "󰛢", color = "red" },
+			{
+				"<leader>a",
+				function()
+					local branch_name = util.current_branch()
+
+					if branch_name ~= "" then
+						branch_list:remove({ value = branch_name, context = {} })
+						branch_list:prepend({ value = branch_name, context = {} })
+					end
+
+					branch_local_list():add()
+				end,
+				desc = "Harpoon Add File",
+			},
+			{
+				"<C-e>",
+				function()
+					harpoon.ui:toggle_quick_menu(branch_local_list())
+				end,
+				desc = "Harpoon Show List",
+			},
+			{
+				"<C-j>",
+				function()
+					branch_local_list():select(1)
+				end,
+				desc = "Harpoon Buffer 1",
+			},
+			{
+				"<C-k>",
+				function()
+					branch_local_list():select(2)
+				end,
+				desc = "Harpoon Buffer 2",
+			},
+			{
+				"<C-l>",
+				function()
+					branch_local_list():select(3)
+				end,
+				desc = "Harpoon Buffer 3",
+			},
+			{
+				"<leader>cb",
+				function()
+					harpoon.ui:toggle_quick_menu(branch_list)
+				end,
+				desc = "Harpoon Copy Branch List",
+			},
+		})
 
 		-- terminals
 
-		harpoon:list("term"):clear()
-		harpoon:list("term"):add()
-		harpoon:list("term"):add()
-		harpoon:list("term"):add()
+		terminal_list:clear()
+		terminal_list:add()
+		terminal_list:add()
+		terminal_list:add()
 
 		require("which-key").add({
 			group = "harpoon",
 			{
 				"<C-u>",
 				function()
-					harpoon:list("term"):select(1)
+					terminal_list:select(1)
 				end,
 				desc = "Harpoon Term 1",
 			},
 			{
 				"<C-i>",
 				function()
-					harpoon:list("term"):select(2)
+					terminal_list:select(2)
 				end,
 				desc = "Harpoon Term 2",
 			},
@@ -130,7 +192,7 @@ return {
 			{
 				"<C-o>",
 				function()
-					harpoon:list("term"):select(3)
+					terminal_list:select(3)
 				end,
 				desc = "Harpoon Term 3",
 			},

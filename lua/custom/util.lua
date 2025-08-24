@@ -20,6 +20,21 @@ function M.copy(tbl)
 	return tbl_copy
 end
 
+--- Returns ture if `list` contains `value`
+---
+--- @param list table
+--- @param value any
+--- @return boolean
+function M.contains(list, value)
+	for _, v in ipairs(list) do
+		if v == value then
+			return true
+		end
+	end
+
+	return false
+end
+
 --- Returns true if `list` contains all `values`.
 ---
 --- @param list table
@@ -41,6 +56,35 @@ function M.contains_multiple(list, values)
 	end
 
 	return false
+end
+
+--- The name of the current git branch or "" if the project is not a git repository.
+---
+--- @return string
+function M.current_branch()
+	local success, branch_name = pcall(vim.fn.system, "git branch --show-current")
+
+	if success then
+		return (branch_name:gsub("\n", ""))
+	else
+		return ""
+	end
+end
+
+--- The list of git branches.
+---
+--- @return table
+function M.branches()
+	local result = {}
+	local success, branch_names = pcall(vim.fn.system, "git branch -l --format=%(refname:short)")
+
+	if success then
+		for branch_name in string.gmatch(branch_names, "([^\n]+)") do
+			table.insert(result, branch_name)
+		end
+	end
+
+	return result
 end
 
 return M
