@@ -11,6 +11,7 @@ return {
 			lsp_format = "fallback",
 		},
 		formatters_by_ft = {
+			html = { "prettier" },
 			typescript = { "prettier" },
 			lua = { "stylua" },
 			vue = { "prettier" },

@@ -50,6 +50,13 @@ return {
 				builtin.help_tags,
 				desc = "Help Tags",
 			},
+			{
+				"<leader>fv",
+				function()
+					builtin.find_files({ hidden = true })
+				end,
+				desc = "Find Hidden Files",
+			},
 		}
 
 		for _, keybind in ipairs(keybinds) do
