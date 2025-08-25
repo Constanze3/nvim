@@ -79,12 +79,36 @@ return {
 				end,
 			},
 			branches = {
-				select = function(list_item, _, _)
-					local list_name = list_name_for_branch(list_item.value)
-					local items = harpoon:list(list_name).items
+				select = function(list_item, _, options)
+					vim.notify("")
 
-					for _, item in ipairs(items) do
-						branch_local_list():add({ value = item.value, context = {} })
+					local mode = "checkout"
+
+					if options ~= nil then
+						mode = options.mode
+					end
+
+					if mode == "checkout" then
+						local branch_name = list_item.value
+
+						local _ = vim.fn.system(string.format("git checkout %s", branch_name))
+
+						if vim.v.shell_error ~= 0 then
+							vim.notify("Failed to checkout branch", vim.log.levels.ERROR)
+							return
+						end
+
+						harpoon:list("branches"):remove({ value = branch_name, context = {} })
+						harpoon:list("branches"):prepend({ value = branch_name, context = {} })
+					end
+
+					if mode == "copy" then
+						local list_name = list_name_for_branch(list_item.value)
+						local items = harpoon:list(list_name).items
+
+						for _, item in ipairs(items) do
+							branch_local_list():add({ value = item.value, context = {} })
+						end
 					end
 				end,
 			},
@@ -157,9 +181,16 @@ return {
 				desc = "Harpoon Buffer 3",
 			},
 			{
-				"<leader>cb",
+				"<leader>bb",
 				function()
 					harpoon.ui:toggle_quick_menu(branch_list)
+				end,
+				desc = "Harpoon Checkout Branch",
+			},
+			{
+				"<leader>bc",
+				function()
+					harpoon.ui:toggle_quick_menu(branch_list, { mode = "copy" })
 				end,
 				desc = "Harpoon Copy Branch List",
 			},

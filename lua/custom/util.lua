@@ -62,9 +62,9 @@ end
 ---
 --- @return string
 function M.current_branch()
-	local success, branch_name = pcall(vim.fn.system, "git branch --show-current")
+	local branch_name = vim.fn.system("git branch --show-current")
 
-	if success then
+	if vim.v.shell_error == 0 then
 		return (branch_name:gsub("\n", ""))
 	else
 		return ""
@@ -76,9 +76,9 @@ end
 --- @return table
 function M.branches()
 	local result = {}
-	local success, branch_names = pcall(vim.fn.system, "git branch -l --format=%(refname:short)")
+	local branch_names = vim.fn.system("git branch -l --format=%(refname:short)")
 
-	if success then
+	if vim.v.shell_error == 0 then
 		for branch_name in string.gmatch(branch_names, "([^\n]+)") do
 			table.insert(result, branch_name)
 		end
