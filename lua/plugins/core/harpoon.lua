@@ -27,6 +27,14 @@ return {
 		"folke/which-key.nvim",
 	},
 	config = function()
+		vim.g.harpoon_ui_options = {}
+		vim.g.use_harpoon_ui_options = function()
+			local result = vim.g.harpoon_ui_options
+			vim.g.harpoon_ui_options = {}
+
+			return result
+		end
+
 		local harpoon = require("harpoon")
 
 		vim.g.harpoon_term_index = 1
@@ -79,16 +87,17 @@ return {
 				end,
 			},
 			branches = {
-				select = function(list_item, _, options)
+				select = function(list_item, _, _)
 					vim.notify("")
 
-					local mode = "checkout"
+					local options = vim.g.use_harpoon_ui_options()
 
+					local mode = "checkout"
 					if options ~= nil then
 						mode = options.mode
 					end
 
-					if mode == "checkout" then
+					local checkout = function()
 						local branch_name = list_item.value
 
 						local _ = vim.fn.system(string.format("git checkout %s", branch_name))
@@ -102,13 +111,27 @@ return {
 						harpoon:list("branches"):prepend({ value = branch_name, context = {} })
 					end
 
-					if mode == "copy" then
+					local copy = function()
 						local list_name = list_name_for_branch(list_item.value)
 						local items = harpoon:list(list_name).items
 
 						for _, item in ipairs(items) do
 							branch_local_list():add({ value = item.value, context = {} })
 						end
+					end
+
+					local switch = {
+						checkout = checkout,
+						copy = copy,
+					}
+
+					local fn = switch[mode]
+					if fn ~= nil then
+						fn()
+					else
+						local msg =
+							string.format("Harpoon (custom): branches select was called with invalid mode %s ", mode)
+						error(msg)
 					end
 				end,
 			},
@@ -183,6 +206,7 @@ return {
 			{
 				"<leader>bb",
 				function()
+					vim.g.harpoon_ui_options = { mode = "checkout" }
 					harpoon.ui:toggle_quick_menu(branch_list)
 				end,
 				desc = "Harpoon Checkout Branch",
@@ -190,7 +214,8 @@ return {
 			{
 				"<leader>bc",
 				function()
-					harpoon.ui:toggle_quick_menu(branch_list, { mode = "copy" })
+					vim.g.harpoon_ui_options = { mode = "copy" }
+					harpoon.ui:toggle_quick_menu(branch_list)
 				end,
 				desc = "Harpoon Copy Branch List",
 			},

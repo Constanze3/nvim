@@ -31,9 +31,23 @@ return {
 				desc = "Find Files",
 			},
 			{
+				"<leader>fv",
+				function()
+					builtin.find_files({ hidden = true, no_ignore = true })
+				end,
+				desc = "Find Hidden Files",
+			},
+			{
 				"<leader>fg",
 				builtin.live_grep,
 				desc = "Live Grep",
+			},
+			{
+				"<leader>fr",
+				function()
+					builtin.live_grep({ hidden = true, no_ignore = true })
+				end,
+				desc = "Live Grep Hidden Files",
 			},
 			{
 				"<leader>fd",
@@ -49,13 +63,6 @@ return {
 				"<leader>fh",
 				builtin.help_tags,
 				desc = "Help Tags",
-			},
-			{
-				"<leader>fv",
-				function()
-					builtin.find_files({ hidden = true })
-				end,
-				desc = "Find Hidden Files",
 			},
 		}
 

@@ -43,6 +43,25 @@ return {
 			},
 		}
 
+		dap.adapters.php = {
+			type = "executable",
+			command = "php-debug-adapter", -- currently manually installed with Mason
+			serverSourceRoot = "/var/www/html/",
+			localSourceRoot = vim.fn.getcwd(),
+		}
+
+		dap.configurations.php = {
+			{
+				name = "Listen for XDebug",
+				type = "php",
+				request = "launch",
+				port = "9003",
+				log = false,
+				serverSourceRoot = "/src/",
+				localSourceRoot = "/src/",
+			},
+		}
+
 		dap.configurations.rust = {
 			{
 				name = "Debug executable",
