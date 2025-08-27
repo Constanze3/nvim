@@ -33,6 +33,10 @@ local apply_settings = function()
 
 	-- use F1 as an alternative to exit to normal mode fromn insert mode
 	vim.api.nvim_set_keymap("i", "<F1>", "<ESC>", { noremap = false })
+
+	if env.shell ~= nil then
+		vim.opt.shell = env.shell
+	end
 end
 
 vim.g.apply_settings = apply_settings
