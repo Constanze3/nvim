@@ -30,6 +30,15 @@ return {
 		local vue_ls_path = vim.fn.stdpath("data")
 			.. "/mason/packages/vue-language-server/node_modules/@vue/language-server"
 
+		vim.lsp.config("phpactor", {
+			on_init = function(client, _)
+				-- local root = vim.fn.getcwd()
+				-- if vim.fn.filereadable(root .. "/artisan") == 1 then
+				-- 	client.stop()
+				-- end
+			end,
+		})
+
 		vim.lsp.config("vtsls", {
 			settings = {
 				vtsls = {

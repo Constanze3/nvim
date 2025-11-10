@@ -13,7 +13,14 @@ return {
 		-- NETRW
 		wk.add({
 			"E",
-			"<cmd>Explore<cr>",
+			function()
+				local status, _ = pcall(function()
+					vim.cmd("Explore")
+				end)
+
+				if not status then
+				end
+			end,
 			desc = "Open Netrw Explorer",
 		})
 

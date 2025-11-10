@@ -7,9 +7,12 @@ return {
 			file_ignore_patterns = {
 				".git",
 				"target",
+				"dist",
 				"node_modules",
 				"_ide_helper.php",
 				"_ide_helper_models.php",
+				"phpstan-baseline.neon",
+				"venv",
 			},
 		},
 	},
@@ -51,7 +54,9 @@ return {
 			},
 			{
 				"<leader>fd",
-				builtin.diagnostics,
+				function()
+					builtin.diagnostics({ severity = vim.diagnostic.severity.ERROR })
+				end,
 				desc = "Diagnostics",
 			},
 			{

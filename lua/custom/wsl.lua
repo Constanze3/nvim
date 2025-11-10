@@ -8,8 +8,23 @@ vim.g.clipboard = {
 	},
 	paste = {
 		["+"] = "win32yank.exe -o --lf",
-
 		["*"] = "win32yank.exe -o --lf",
 	},
 	cache_enabled = 0,
 }
+
+local wk = require("which-key")
+wk.add({
+	{
+		"<C-c>",
+		'"*y',
+		desc = "Copy",
+		mode = { "n", "i", "v" },
+	},
+	{
+		"<C-v>",
+		'"*p',
+		desc = "Paste",
+		mode = { "n", "i", "v" },
+	},
+})

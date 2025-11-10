@@ -144,19 +144,20 @@ return {
 
 		-- delete branch local lists of branches that do not exist anymore
 		-- sadly the keys are still written to files
-		local branch_names = util.branches()
-		harpoon:_for_each_list(function(list, _, name)
-			if not (string.find(name, "^branch/")) then
-				return
-			end
 
-			local associated_branch_name = (name:gsub("^branch/", ""))
+		-- local branch_names = util.branches()
+		-- harpoon:_for_each_list(function(list, _, name)
+		-- 	if not (string.find(name, "^branch/")) then
+		-- 		return
+		-- 	end
 
-			if not util.contains(branch_names, associated_branch_name) then
-				list:clear()
-				branch_list:remove(associated_branch_name)
-			end
-		end)
+		-- 	local associated_branch_name = (name:gsub("^branch/", ""))
+
+		-- 	if not util.contains(branch_names, associated_branch_name) then
+		-- 		list:clear()
+		-- 		branch_list:remove(associated_branch_name)
+		-- 	end
+		-- end)
 
 		require("which-key").add({
 			group = "harpoon",
@@ -171,7 +172,7 @@ return {
 						branch_list:prepend({ value = branch_name, context = {} })
 					end
 
-					branch_local_list():add()
+					branch_local_list():prepend()
 				end,
 				desc = "Harpoon Add File",
 			},

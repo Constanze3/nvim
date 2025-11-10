@@ -13,10 +13,11 @@ return {
 		formatters_by_ft = {
 			html = { "prettier" },
 			typescript = { "prettier" },
+			typescriptreact = { "prettier" },
 			lua = { "stylua" },
 			vue = { "prettier" },
 			python = { "black" },
-			php = { "php_cs_fixer" },
+			-- php = { "php_cs_fixer" },
 		},
 	},
 	config = function(_, opts)
